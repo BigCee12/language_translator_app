@@ -29,11 +29,24 @@ class TranslationScreenState extends State<TranslationScreen> {
   void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 2),
+        action: SnackBarAction(
+            label: "Done",
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            }),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color.fromARGB(255, 0, 52, 94),
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
+
   Future<void> _translate() async {
     String inputText = inputController.text;
     try {
@@ -77,241 +90,243 @@ class TranslationScreenState extends State<TranslationScreen> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  DropdownButton<LanguageOption>(
-                    value: _sourceLanguage ??
-                        LanguageOption.availableLanguages.first,
-                    items: LanguageOption.availableLanguages
-                        .map((LanguageOption option) {
-                      return DropdownMenuItem<LanguageOption>(
-                        value: option,
-                        child: Text(option.name),
-                      );
-                    }).toList(),
-                    onChanged: (LanguageOption? value) {
-                      setState(() {
-                        _sourceLanguage = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(width: 16),
-                  const Icon(
-                    Icons.swap_horiz,
-                    color: Colors.black,
-                  ),
-                  const SizedBox(width: 16),
-                  DropdownButton<LanguageOption>(
-                    borderRadius: BorderRadius.circular(12),
-                    value: _targetLanguage ??
-                        LanguageOption.availableLanguages.first,
-                    items: LanguageOption.availableLanguages
-                        .map((LanguageOption option) {
-                      return DropdownMenuItem<LanguageOption>(
-                        value: option,
-                        child: Text(
-                          option.name,
-                          style: TextStyle(
-                            color: Colors.grey.shade900,
-                            fontSize: 16,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (LanguageOption? value) {
-                      setState(() {
-                        _targetLanguage = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              height: 200,
-              width: double.infinity,
-              child: SingleChildScrollView(
-                child: Column(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                _sourceLanguage?.name ?? 'Source Language',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Color.fromARGB(255, 0, 52, 94),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              IconButton(
-                                onPressed: () {
-                                  _speak(inputController.text);
-                                },
-                                icon: const Icon(
-                                  Icons.volume_up,
-                                  color: Color.fromARGB(255, 0, 52, 94),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Card(
-                          elevation: 0,
-                          child: TextField(
-                            maxLines: null,
-                            controller: inputController,
-                            decoration: InputDecoration(
-                              labelText: 'Enter Text',
-                              labelStyle: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                                color: Colors.grey[700],
-                              ),
-                              border: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                  color: Colors.transparent,
-                                ),
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              focusedBorder: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.transparent,
-                                ),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.transparent,
-                                ),
-                              ),
-                              filled: true,
-                              fillColor: Colors.grey[200],
-                            ),
-                          ),
-                        ),
-                      ],
+                    DropdownButton<LanguageOption>(
+                      value: _sourceLanguage ??
+                          LanguageOption.availableLanguages.first,
+                      items: LanguageOption.availableLanguages
+                          .map((LanguageOption option) {
+                        return DropdownMenuItem<LanguageOption>(
+                          value: option,
+                          child: Text(option.name),
+                        );
+                      }).toList(),
+                      onChanged: (LanguageOption? value) {
+                        setState(() {
+                          _sourceLanguage = value;
+                        });
+                      },
                     ),
-                    const SizedBox(height: 40),
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 8.0, bottom: 8, right: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor:
-                                  const Color.fromARGB(255, 0, 52, 94),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
+                    const SizedBox(width: 16),
+                    const Icon(
+                      Icons.swap_horiz,
+                      color: Colors.black,
+                    ),
+                    const SizedBox(width: 16),
+                    DropdownButton<LanguageOption>(
+                      borderRadius: BorderRadius.circular(12),
+                      value: _targetLanguage ??
+                          LanguageOption.availableLanguages.first,
+                      items: LanguageOption.availableLanguages
+                          .map((LanguageOption option) {
+                        return DropdownMenuItem<LanguageOption>(
+                          value: option,
+                          child: Text(
+                            option.name,
+                            style: TextStyle(
+                              color: Colors.grey.shade900,
+                              fontSize: 16,
                             ),
-                            onPressed: () {
-                              _translate();
-                            },
-                            child: const Text(
-                              'Translate',
-                              style: TextStyle(
-                                color: Colors.white,
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (LanguageOption? value) {
+                        setState(() {
+                          _targetLanguage = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                height: 213,
+                width: double.infinity,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  _sourceLanguage?.name ?? 'Source Language',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Color.fromARGB(255, 0, 52, 94),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                IconButton(
+                                  onPressed: () {
+                                    _speak(inputController.text);
+                                  },
+                                  icon: const Icon(
+                                    Icons.volume_up,
+                                    color: Color.fromARGB(255, 0, 52, 94),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Card(
+                            elevation: 0,
+                            child: TextField(
+                              maxLines: null,
+                              controller: inputController,
+                              decoration: InputDecoration(
+                                labelText: 'Enter Text',
+                                labelStyle: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                  color: Colors.grey[700],
+                                ),
+                                border: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                    color: Colors.transparent,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey[200],
                               ),
                             ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 8.0, bottom: 8, right: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor:
+                                    const Color.fromARGB(255, 0, 52, 94),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                _translate();
+                              },
+                              child: const Text(
+                                'Translate',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            _targetLanguage?.name ?? 'Target Language',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Color.fromARGB(255, 0, 52, 94),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          IconButton(
+                            onPressed: () {
+                              _speakTranslatedText();
+                            },
+                            icon: const Icon(
+                              Icons.volume_up,
+                              color: Color.fromARGB(255, 0, 52, 94),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          GestureDetector(
+                            onTap: () {
+                              _copyToClipboard();
+                            },
+                            child: const Icon(
+                              size: 20,
+                              Icons.copy,
+                              color: Color.fromARGB(255, 0, 52, 94),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        _outputText,
+                        style: TextStyle(
+                          color: Colors.grey.shade700,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              height: 200,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          _targetLanguage?.name ?? 'Target Language',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color.fromARGB(255, 0, 52, 94),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        IconButton(
-                          onPressed: () {
-                            _speakTranslatedText();
-                          },
-                          icon: const Icon(
-                            Icons.volume_up,
-                            color: Color.fromARGB(255, 0, 52, 94),
-                          ),
-                        ),
-                         const SizedBox(width: 10),
-                        GestureDetector(
-                          onTap: () {
-                            _copyToClipboard();
-                          },
-                          child: const Icon(size: 20,
-                            Icons.copy,
-                            color: Color.fromARGB(255, 0, 52, 94),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      _outputText,
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
-
-  
 }
